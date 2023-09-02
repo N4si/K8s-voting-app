@@ -1,0 +1,2 @@
+#Imperative command to create service to expose frontend deployment 
+#kubectl expose deploy api \ --name=api \ --type=LoadBalancer \ --port=80 \ --target-port=8080
