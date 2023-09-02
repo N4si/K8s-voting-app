@@ -20,7 +20,9 @@ The EKS cloud native application architecture consists of 3 main components, th
 
 References:
 https://kubernetes.io/docs/home/
+
 https://www.mongodb.com/docs/manual/tutorial/query-documents/
+
 https://repost.aws/knowledge-center/eks-api-server-unauthorized-error (how to edit configmap if you get the error message : ""You must be logged in to the server (Unauthorized)")
 
 
