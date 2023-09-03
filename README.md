@@ -47,7 +47,10 @@ Creating and deploying this cloud-native web voting application with Kubernetes 
 By working through this project, you'll develop a deeper understanding of cloud-native application development, containerization, Kubernetes, and the various technologies involved in building and deploying modern web applications.
 
 
-### **********************Steps to Deploy********************************
+### **************************Steps to Deploy**************************
+
+Youtube Video to refer:
+[![Video Tutorial](https://img.youtube.com/vi/pTmIoKUeU-A/0.jpg)](https://youtu.be/pTmIoKUeU-A)
 
 Create EKS cluster with NodeGroup (2 nodes of t2.medium instance type)
 Create EC2 Instance t2.micro (Optional)
@@ -104,6 +107,8 @@ git clone https://github.com/N4si/K8s-voting-app.git
 ```
 
 **MONGO Database Setup**
+
+
 To create Mongo statefulset with Persistent volumes, run the command in manifests folder:
 ```
 kubectl apply -f mongo-statefulset.yaml
@@ -139,6 +144,7 @@ kubectl exec -it mongo-0 -- mongo --eval "rs.status()" | grep "PRIMARY\|SECONDAR
 ```
 
 Load the Data in the database by running this command:
+## Note: use langdb not landb() as shown in the video
 ```
 cat << EOF | kubectl exec -it mongo-0 -- mongo
 use langdb;
@@ -171,10 +177,13 @@ kubectl expose deploy api \ --name=api \ --type=LoadBalancer \ --port=80 \ --tar
 ```
 
 Next set the environment variable:
+
 ```
 {
 API_ELB_PUBLIC_FQDN=$(kubectl get svc api -ojsonpath="{.status.loadBalancer.ingress[0].hostname}")
-echo API_ELB_PUBLIC_FQDN=$API_ELB_PUBLIC_FQDN
+until nslookup $API_ELB_PUBLIC_FQDN >/dev/null 2>&1; do sleep 2 && echo waiting for DNS to propagate...; done
+curl $API_ELB_PUBLIC_FQDN/ok
+echo
 }
 ```
 
@@ -189,6 +198,7 @@ curl -s $API_ELB_PUBLIC_FQDN/languages/nodejs | jq .
 If everything works fine, go ahead with Frontend setup.
 
 **Frontend setup**
+
 Create the Frontend Deployment resource. In the terminal run the following command:
 ```
 kubectl apply -f frontend-deployment.yaml
@@ -226,4 +236,5 @@ kubectl exec -it mongo-0 -- mongo langdb --eval "db.languages.find().pretty()"
 ```
 
 ## **Summary**
+
 In this Project, you learnt how to deploy a cloud native application into EKS. Once deployed and up and running, you used your local workstation's browser to test out the application. You later confirmed that your activity within the application generated data which was captured and recorded successfully within the MongoDB ReplicaSet back end within the cluster.
