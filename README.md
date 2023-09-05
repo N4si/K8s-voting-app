@@ -113,6 +113,11 @@ Clone the github repo
 git clone https://github.com/N4si/K8s-voting-app.git
 ```
 
+**Create CloudChamp Namespace**
+```
+kubectl create ns cloudchamp
+```
+
 **MONGO Database Setup**
 
 
@@ -123,7 +128,7 @@ kubectl apply -f mongo-statefulset.yaml
 
 Mongo Service
 ```
-kubectl apply -f mongo-statefulset.yaml
+kubectl apply -f mongo-service.yaml
 ```
 
 On the `mongo-0` pod, initialise the Mongo database Replica set. In the terminal run the following command:
