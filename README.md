@@ -133,6 +133,21 @@ Mongo Service
 kubectl apply -f mongo-service.yaml
 ```
 
+Create a temporary network utils pod. Enter into a bash session within it. In the terminal run the following command:
+```
+kubectl run --rm utils -it --image praqma/network-multitool -- bash
+```
+Within the new utils pod shell, execute the following DNS queries:
+```
+for i in {0..2}; do nslookup mongo-$i.mongo; done
+```
+Note: This confirms that the DNS records have been created successfully and can be resolved within the cluster, 1 per MongoDB pod that exists behind the Headless Service - earlier created. 
+
+Exit the utils container
+```
+exit
+```
+
 On the `mongo-0` pod, initialise the Mongo database Replica set. In the terminal run the following command:
 ```
 cat << EOF | kubectl exec -it mongo-0 -- mongo
@@ -187,7 +202,11 @@ kubectl apply -f api-deployment.yaml
 
 Expose API deployment through service using the following command:
 ```
-kubectl expose deploy api \ --name=api \ --type=LoadBalancer \ --port=80 \ --target-port=8080
+kubectl expose deploy api \
+ --name=api \
+ --type=LoadBalancer \
+ --port=80 \
+ --target-port=8080
 ```
 
 Next set the environment variable:
@@ -210,6 +229,12 @@ curl -s $API_ELB_PUBLIC_FQDN/languages/nodejs | jq .
 ```
 
 If everything works fine, go ahead with Frontend setup.
+```
+{
+API_ELB_PUBLIC_FQDN=$(kubectl get svc api -ojsonpath="{.status.loadBalancer.ingress[0].hostname}")
+echo API_ELB_PUBLIC_FQDN=$API_ELB_PUBLIC_FQDN
+}
+```
 
 **Frontend setup**
 
@@ -220,7 +245,11 @@ kubectl apply -f frontend-deployment.yaml
 
 Create a new Service resource of LoadBalancer type. In the terminal run the following command:
 ```
-kubectl expose deploy frontend \ --name=frontend \ --type=LoadBalancer \ --port=80 \ --target-port=8080
+kubectl expose deploy frontend \
+ --name=frontend \
+ --type=LoadBalancer \
+ --port=80 \
+ --target-port=8080
 ```
 
 Confirm that the Frontend ELB is ready to recieve HTTP traffic. In the terminal run the following command:
