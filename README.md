@@ -173,7 +173,7 @@ kubectl exec -it mongo-0 -- mongo --eval "rs.status()" | grep "PRIMARY\|SECONDAR
 ```
 
 Load the Data in the database by running this command:
-## Note: use langdb not landb() as shown in the video
+## Note: use langdb not langdb() as shown in the video
 ```
 cat << EOF | kubectl exec -it mongo-0 -- mongo
 use langdb;
